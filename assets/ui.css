@@ -1,0 +1,236 @@
+/* Set input cursor (caret) color to black globally */
+input, textarea, [contenteditable="true"] {
+  caret-color: #000 !important;
+}
+/* GLOBAL OVERRIDE: Force all dropdowns and popovers to white background and black text */
+body *[data-baseweb="popover"],
+body *[data-baseweb="popover"] *,
+body *[data-baseweb="menu"],
+body *[data-baseweb="menu"] *,
+body *[role="listbox"],
+body *[role="listbox"] *,
+body .stSelectbox * {
+  background: #fff !important;
+  color: #111 !important;
+  
+}
+body *[data-baseweb="menu"] li:hover,
+body *[data-baseweb="menu"] [aria-selected="true"],
+body *[role="listbox"] [aria-selected="true"],
+body *[role="listbox"] li:hover {
+  background: #f1f5f9 !important;
+  color: #111 !important;
+}
+/* ULTRA-SPECIFIC: Force Streamlit/BaseWeb dropdown popover to white with black text */
+.stApp div[data-baseweb="popover"],
+.stApp div[data-baseweb="popover"] *,
+.stApp div[data-baseweb="popover"] [data-baseweb="menu"],
+.stApp div[data-baseweb="popover"] [data-baseweb="menu"] *,
+.stApp div[data-baseweb="popover"] [role="listbox"],
+.stApp div[data-baseweb="popover"] [role="listbox"] *,
+.stApp div[data-baseweb="popover"] ul,
+.stApp div[data-baseweb="popover"] li,
+.stApp div[data-baseweb="popover"] [role="option"] {
+  background: #fff !important;
+  color: #111 !important;
+
+}
+.stApp div[data-baseweb="popover"] li:hover,
+.stApp div[data-baseweb="popover"] [aria-selected="true"] {
+  background: #f1f5f9 !important;
+  color: #111 !important;
+}
+/* FinSolve Streamlit UI Theme */
+
+:root {
+  
+  --color-text: #0e1013;       /* slate-900 */
+  --color-text-strong: #0f172a;/* slate-900 deep */
+  --color-muted: #6b7280;      /* gray-500 */
+  --color-border: #cbd5e1;     /* slate-300 */
+  --color-border-soft: #e5e7eb;/* gray-200 */
+  --color-surface: #ffffff;    /* white */
+  --color-surface-muted: #f8fafc; /* slate-50 */
+  --color-surface-hover: #e5e7eb; /* gray-200 */
+}
+
+/* Base text colors */
+html, body, .stApp { color: var(--color-text) !important; }
+h1, h2, h3, h4, h5, h6 { color: var(--color-text-strong) !important; }
+p, li, span, div, label { color: var(--color-text) !important; }
+
+/* Inputs & selects */
+.stTextInput > div > div > input,
+.stTextArea textarea,
+
+.stDateInput > div > div input {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+}
+
+.stSelectbox > div > div input {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+}
+
+.stTextInput input::placeholder, .stTextArea textarea::placeholder {
+  color: var(--color-muted) !important;
+}
+
+/* Buttons */
+.stButton > button {
+  background-color: #f1f5f9 !important; /* slate-100 */
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+}
+
+/* File uploader */
+.stFileUploader, .stFileUploader label { color: var(--color-text) !important; }
+
+/* Alerts */
+.stAlert, .stAlert p, .stAlert div { color: var(--color-text) !important; }
+
+/* Selectbox control label & value */
+.stSelectbox label, .stSelectbox span { color: var(--color-surface) !important; }
+.stSelectbox [data-baseweb="select"] { color: var(--color-surface) !important; }
+
+/* Select dropdown popover (BaseWeb menu) */
+[data-baseweb="menu"] {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 20px rgba(216, 19, 19, 0.08) !important;
+}
+[data-baseweb="menu"] li,
+[data-baseweb="menu"] [role="option"],
+[data-baseweb="menu"] div {
+  color: black !important;
+}
+[data-baseweb="menu"] li:hover,
+[data-baseweb="menu"] li[aria-selected="true"],
+[data-baseweb="menu"] [aria-selected="true"] {
+  background-color: var(--color-surface-hover) !important;
+  color: var(--color-text) !important;
+}
+
+/* Fallback role-based selectors (for Streamlit variants) */
+div[role="listbox"] {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important;
+}
+div[role="listbox"] div[role="option"] { color: var(--color-text) !important; }
+div[role="listbox"] div[role="option"][aria-selected="true"],
+div[role="listbox"] div[role="option"]:hover {
+  background-color: var(--color-surface-hover) !important;
+  color: var(--color-text) !important;
+}
+
+/* Header card (top welcome box) */
+.header-card {
+  background-color: rgba(255, 255, 255, 0.96);
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  text-align: center;
+  border: 1px solid var(--color-border-soft);
+}
+.header-title { color: var(--color-text-strong); margin: 2px 0; }
+.header-subtitle { color: var(--color-text); margin: 0; }
+
+/* ==============================
+   Dropdown visibility overrides
+   Ensures white background + dark text
+   for BaseWeb menu and role=listbox popovers
+   ============================== */
+
+/* BaseWeb select menu (primary target) */
+.stApp [data-baseweb="menu"],
+body [data-baseweb="menu"] {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.stApp [data-baseweb="menu"] *,
+body [data-baseweb="menu"] * {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+.stApp [data-baseweb="menu"] [aria-selected="true"],
+.stApp [data-baseweb="menu"] li:hover,
+body [data-baseweb="menu"] [aria-selected="true"],
+body [data-baseweb="menu"] li:hover {
+  background-color: var(--color-surface-hover) !important;
+  color: var(--color-text) !important;
+}
+
+/* Role-based listbox (fallback target) */
+.stApp div[role="listbox"],
+body div[role="listbox"] {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.stApp div[role="listbox"] [role="option"],
+body div[role="listbox"] [role="option"] {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+.stApp div[role="listbox"] [role="option"][aria-selected="true"],
+.stApp div[role="listbox"] [role="option"]:hover,
+body div[role="listbox"] [role="option"][aria-selected="true"],
+body div[role="listbox"] [role="option"]:hover {
+  background-color: var(--color-surface-hover) !important;
+  color: var(--color-text) !important;
+}
+
+/* Force dropdown (selectbox) to white background + black text */
+.stSelectbox [data-baseweb="select"] > div {
+  background-color: white !important;
+  color: white !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+}
+
+/* Dropdown list (opened options) */
+[data-baseweb="menu"],
+[data-baseweb="menu"] *,
+[data-baseweb="menu"] li,
+[data-baseweb="menu"] [role="option"],
+[data-baseweb="menu"] ul,
+[data-baseweb="menu"] div {
+  background-color: #fff !important;
+  color: #111 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Hover & selected state */
+[data-baseweb="menu"] li:hover,
+[data-baseweb="menu"] [aria-selected="true"] {
+  background-color: #f1f5f9 !important;
+  color: #111 !important;
+}
+
+/* Ensure label and selected text are also black */
+.stSelectbox label,
+.stSelectbox span,
+.stSelectbox div[data-baseweb="select"] span {
+  color: #111 !important;
+}
+
+/* Extra: force parent popover container to white */
+.stApp div[data-baseweb="popover"] {
+  background: #fff !important;
+  color: #111 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
