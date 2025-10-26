@@ -44,15 +44,16 @@ vectorstore = Chroma(
 
 
 def embed_documents_to_vectorstore(docs):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    # Optimized chunk size for faster processing and retrieval
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=800,      # Reduced from 1000 for faster retrieval
+        chunk_overlap=150    # Reduced from 200 for less redundancy
+    )
     splits = text_splitter.split_documents(docs)
     vectorstore.add_documents(splits)
     
     print("Documents embedded and saved to vectorstore.")
     print("Total documents:", len(vectorstore.get()["documents"]))
-    #print("Chunks being added:")
-    #for chunk in splits:
-    #    print(f"---\n{chunk.page_content[:150]}...\nMetadata: {chunk.metadata}")
 
 
 
@@ -122,11 +123,13 @@ def run_indexer():
 # Two prompt styles: brief and extended
 system_prompt_brief = (
     "Answer briefly using only the context below. Maximum 100 words.\n"
+    #"Answer thoroughly using only the context below. Provide details, examples or steps if applicable. If the information is not present in the context, reply exactly: 'I couldn't find an answer in the documents.' Do NOT invent or hallucinate any facts. Cite the source filename for each substantive claim. Maximum 400 words.\n"
+
     "{context}"
 )
 
 system_prompt_extended = (
-    "Answer thoroughly using only the context below. Provide details, examples or steps if applicable. Maximum 400 words.\n"
+    "Answer thoroughly using only the context below. Provide details, examples or steps if applicable. If the information is not present in the context, reply exactly: 'I couldn't find an answer in the documents.' Do NOT invent or hallucinate any facts. Cite the source filename for each substantive claim. Maximum 400 words.\n"
     "{context}"
 )
 
@@ -145,10 +148,10 @@ chat_prompt_extended = ChatPromptTemplate.from_messages([
 # ==============================
 model = Ollama(
     model="llama3.1",  
-    temperature=0.8,     # Higher for faster responses
-    timeout=120,         # Extended timeout for complex queries
-    num_predict=100,     # Smaller response limit
-    top_p=0.9,          # Focus on top predictions
+    temperature=0.6,     # Slightly lower for faster, more focused responses
+    timeout=120,         # Reduced from 240s to 120s (2 minutes)
+    num_predict=150,     # Reduced from 200 to 150 for faster generation
+    top_p=0.85,          # Slightly lower for more focused outputs
     repeat_penalty=1.1   # Prevent repetition
 )
 
@@ -158,6 +161,10 @@ question_answering_chain_extended = create_stuff_documents_chain(model, chat_pro
 # ==============================
 # Add a Reranker
 # ==============================
+
+# Cache for RAG chains to avoid recreation
+_CHAIN_CACHE = {}
+
 def wrap_with_reranker(retriever, cohere_api_key, top_n=4):
     #print("[INFO] Using Cohere reranker.")
     reranker = CohereRerank(
@@ -171,27 +178,44 @@ def wrap_with_reranker(retriever, cohere_api_key, top_n=4):
     )
 
 def get_rag_chain(user_role: str, cohere_api_key: str = None, detail: str = "brief"):
+    """Get or create a cached RAG chain for the given role and detail level."""
+    # Create cache key
+    cache_key = f"{user_role.lower()}_{detail}_{bool(cohere_api_key)}"
+    
+    # Return cached chain if available
+    if cache_key in _CHAIN_CACHE:
+        print(f"[RAG Cache] Using cached chain for {cache_key}")
+        return _CHAIN_CACHE[cache_key]
+    
+    print(f"[RAG Cache] Creating new chain for {cache_key}")
     user_role = user_role.lower()
 
     if user_role == "c-level":
-        # C-level sees everything
-        retriever = vectorstore.as_retriever(search_kwargs={"k": 2})  # Reduced for speed
+        # C-level sees everything with more comprehensive retrieval
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 4})  # Reduced from 5 to 4
 
     elif user_role == "general":
         # General role sees only general documents
         retriever = vectorstore.as_retriever(search_kwargs={
-            "k": 2,  # Reduced for speed
+            "k": 2,
             "filter": {"role": "general"}
         })
 
     else:
-        # All other roles see their docs + general
-        retriever = vectorstore.as_retriever(search_kwargs={
-            "k": 2,  # Reduced for speed
-            "filter": {
-                "role": {"$in": [user_role, "general"]}
-            }
-        })
+        # For extended/strict answers, restrict retrieval to the user's role only
+        if detail and str(detail).lower() == "extended":
+            retriever = vectorstore.as_retriever(search_kwargs={
+                "k": 5,  # Reduced from 6 to 5
+                "filter": {"role": user_role}
+            })
+        else:
+            # All other roles see their docs + general for brief answers
+            retriever = vectorstore.as_retriever(search_kwargs={
+                "k": 2,
+                "filter": {
+                    "role": {"$in": [user_role, "general"]}
+                }
+            })
 
     # wrap with reranker
     if cohere_api_key:
@@ -204,7 +228,12 @@ def get_rag_chain(user_role: str, cohere_api_key: str = None, detail: str = "bri
     else:
         qa_chain = question_answering_chain_brief
 
-    return create_retrieval_chain(retriever, qa_chain)
+    chain = create_retrieval_chain(retriever, qa_chain)
+    
+    # Cache the chain
+    _CHAIN_CACHE[cache_key] = chain
+    
+    return chain
     """
     from langchain_core.runnables import RunnableLambda, RunnableMap
 

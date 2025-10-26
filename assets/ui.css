@@ -2,6 +2,42 @@
 input, textarea, [contenteditable="true"] {
   caret-color: #000 !important;
 }
+
+/* Chat input field styling - light background, dark text and cursor */
+.stChatInput, 
+.stChatInput textarea,
+.stChatInput input,
+[data-testid="stChatInput"],
+[data-testid="stChatInput"] textarea,
+[data-testid="stChatInput"] input,
+[data-testid="chatInput"],
+[data-testid="chatInput"] textarea {
+  background-color: #f8fafc !important; /* light slate background */
+  color: #0f172a !important; /* dark slate text */
+  caret-color: #0f172a !important; /* dark cursor */
+  border: 1px solid #cbd5e1 !important; /* subtle border */
+  border-radius: 12px !important;
+}
+
+/* Chat input placeholder text */
+.stChatInput textarea::placeholder,
+.stChatInput input::placeholder,
+[data-testid="stChatInput"] textarea::placeholder,
+[data-testid="chatInput"] textarea::placeholder {
+  color: #64748b !important; /* muted gray for placeholder */
+  opacity: 0.7 !important;
+}
+
+/* Chat input focus state */
+.stChatInput textarea:focus,
+.stChatInput input:focus,
+[data-testid="stChatInput"] textarea:focus,
+[data-testid="chatInput"] textarea:focus {
+  background-color: #ffffff !important; /* white on focus */
+  border-color: #94a3b8 !important; /* slightly darker border on focus */
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.1) !important;
+}
 /* GLOBAL OVERRIDE: Force all dropdowns and popovers to white background and black text */
 body *[data-baseweb="popover"],
 body *[data-baseweb="popover"] *,
@@ -87,6 +123,31 @@ p, li, span, div, label { color: var(--color-text) !important; }
   color: var(--color-text) !important;
   border: 1px solid var(--color-border) !important;
   border-radius: 10px !important;
+}
+
+/* Make download buttons (st.download_button) readable across Streamlit versions */
+.stDownloadButton button,
+.st-download-button,
+.stDownloadButton > button,
+a[download],
+.stDownloadButton,
+.st-download-button > a {
+  background-color: #f1f5f9 !important; /* light background */
+  color: var(--color-text) !important; /* dark text */
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--color-border) !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  font-weight: 600 !important;
+}
+.stDownloadButton button:hover,
+.st-download-button:hover,
+.stDownloadButton > button:hover,
+a[download]:hover,
+.st-download-button > a:hover {
+  background-color: #e5e7eb !important;
+  color: var(--color-text) !important;
 }
 
 /* File uploader */

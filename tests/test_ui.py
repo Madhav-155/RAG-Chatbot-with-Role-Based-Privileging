@@ -62,7 +62,8 @@ def test_c_level_full_flow(page):
     dropdown_popup.get_by_text("C-Level", exact=True).click()
     dropdown.wait_for(timeout=15000)
 
-    page.get_by_text("Upload document (.md or .csv)")
+    # Uploader label can be singular or plural, match loosely
+    page.get_by_text(re.compile(r"Upload document", re.I))
 
     # Simulate file upload
     # Wait for upload area
@@ -72,12 +73,14 @@ def test_c_level_full_flow(page):
     page.locator('input[type="file"]').set_input_files("tests/sample_docs/sample_hr.md")
 
     dropdown.wait_for(timeout=15000)
-    
-    
-    
-    page.get_by_role("button", name="Upload Document").click()
+    # Button label can be singular or plural, click either
+    try:
+        page.get_by_role("button", name="Upload Document(s)").click()
+    except Exception:
+        page.get_by_role("button", name="Upload Document").click()
     page.wait_for_timeout(15000)
-    page.wait_for_selector("text=sample_hr.md uploaded successfully for role 'c-level'", timeout=15000)
+    # Accept either C-Level or c-level in message
+    page.get_by_text(re.compile(r"sample_hr\.md uploaded successfully for role 'c-level'", re.I)).wait_for(timeout=15000)
 
     # ---------- Logout ----------
     page.get_by_role("button", name="Logout").click()
