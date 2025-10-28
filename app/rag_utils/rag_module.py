@@ -148,10 +148,11 @@ chat_prompt_extended = ChatPromptTemplate.from_messages([
 # ==============================
 model = Ollama(
     model="llama3.1",  
-    temperature=0.6,     # Slightly lower for faster, more focused responses
-    timeout=120,         # Reduced from 240s to 120s (2 minutes)
-    num_predict=150,     # Reduced from 200 to 150 for faster generation
-    top_p=0.85,          # Slightly lower for more focused outputs
+    # Tighter generation settings to speed up RAG responses without hurting quality
+    temperature=0.0,     # Deterministic and concise
+    timeout=120,         # Keep overall cap at 2 minutes
+    num_predict=100,     # Lower max tokens to reduce generation time
+    top_p=0.5,           # More focused sampling
     repeat_penalty=1.1   # Prevent repetition
 )
 
@@ -191,36 +192,55 @@ def get_rag_chain(user_role: str, cohere_api_key: str = None, detail: str = "bri
     user_role = user_role.lower()
 
     if user_role == "c-level":
-        # C-level sees everything with more comprehensive retrieval
-        retriever = vectorstore.as_retriever(search_kwargs={"k": 4})  # Reduced from 5 to 4
+        # C-level sees everything; use MMR for diverse, smaller context set
+        retriever = vectorstore.as_retriever(
+            search_type="mmr",
+            search_kwargs={
+                "k": 3,            # reduce retrieved docs
+                "lambda_mult": 0.8 # balance relevance/diversity
+            }
+        )
 
     elif user_role == "general":
         # General role sees only general documents
-        retriever = vectorstore.as_retriever(search_kwargs={
-            "k": 2,
-            "filter": {"role": "general"}
-        })
+        retriever = vectorstore.as_retriever(
+            search_type="mmr",
+            search_kwargs={
+                "k": 2,
+                "lambda_mult": 0.8,
+                "filter": {"role": "general"}
+            }
+        )
 
     else:
         # For extended/strict answers, restrict retrieval to the user's role only
         if detail and str(detail).lower() == "extended":
-            retriever = vectorstore.as_retriever(search_kwargs={
-                "k": 5,  # Reduced from 6 to 5
-                "filter": {"role": user_role}
-            })
+            retriever = vectorstore.as_retriever(
+                search_type="mmr",
+                search_kwargs={
+                    "k": 3,  # reduce retrieved docs further in extended to keep latency bounded
+                    "lambda_mult": 0.8,
+                    "filter": {"role": user_role}
+                }
+            )
         else:
             # All other roles see their docs + general for brief answers
-            retriever = vectorstore.as_retriever(search_kwargs={
-                "k": 2,
-                "filter": {
-                    "role": {"$in": [user_role, "general"]}
+            retriever = vectorstore.as_retriever(
+                search_type="mmr",
+                search_kwargs={
+                    "k": 2,
+                    "lambda_mult": 0.8,
+                    "filter": {
+                        "role": {"$in": [user_role, "general"]}
+                    }
                 }
-            })
+            )
 
     # wrap with reranker
+    # Only use reranker when explicitly requested (passed from caller)
     if cohere_api_key:
         print("Using cohere reranker")
-        retriever = wrap_with_reranker(retriever, cohere_api_key)
+        retriever = wrap_with_reranker(retriever, cohere_api_key, top_n=3)
 
     # Choose QA chain based on requested detail
     if detail and detail.lower() == "extended":

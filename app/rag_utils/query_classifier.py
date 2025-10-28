@@ -26,6 +26,8 @@ RAG_KEYWORDS = [
 def fast_classify(question: str) -> str | None:
     """Fast keyword-based classification. Returns None if uncertain."""
     q_lower = question.lower()
+    # Normalize phrases that can confuse SQL detection (e.g., "employee handbook" is a doc, not a table)
+    q_norm = q_lower.replace("employee handbook", "handbook")
     
     # Strong SQL indicators with explicit patterns
     sql_patterns = [
@@ -67,18 +69,25 @@ def fast_classify(question: str) -> str | None:
     
     # Check for strong RAG patterns first (to avoid SQL false positives)
     # But exclude if it contains SQL-related terms like "salary", "employee", etc.
-    has_sql_terms = any(term in q_lower for term in ["salary", "employee", "rating", "department", "count", "total"])
+    # Use normalized text so phrases like "employee handbook" don't count as SQL-y
+    has_sql_terms = any(term in q_norm for term in ["salary", "employee", "rating", "department", "count", "total"])
     
     if not has_sql_terms:
-        if any(pattern in q_lower for pattern in rag_patterns):
+        if any(pattern in q_lower for pattern in rag_patterns) or ("handbook" in q_lower):
             return "RAG"
+
+    # Strong override: document-oriented nouns + explanation verbs => RAG
+    doc_nouns = ["handbook", "report", "policy", "policies", "guidelines"]
+    explain_verbs = ["summarize", "summary", "explain", "describe", "what is", "overview"]
+    if any(n in q_lower for n in doc_nouns) and any(v in q_lower for v in explain_verbs):
+        return "RAG"
     
     # Check for strong SQL patterns
     if any(pattern in q_lower for pattern in sql_patterns):
         return "SQL"
     
     # Check for strong SQL indicators
-    sql_score = sum(1 for keyword in SQL_KEYWORDS if keyword in q_lower)
+    sql_score = sum(1 for keyword in SQL_KEYWORDS if keyword in q_norm)
     rag_score = sum(1 for keyword in RAG_KEYWORDS if keyword in q_lower)
     
     # Definitive SQL patterns

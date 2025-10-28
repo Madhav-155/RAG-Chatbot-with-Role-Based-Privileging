@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv/
+venv/
+.Python
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.cache
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# Chroma DB and indexes (regenerated)
+chroma_db/
+
+# Local DBs and uploads
+roles_docs.db
+static/uploads/
+static/data/structured_queries.duckdb
+
+# Logs
+*.log
+
+# System files
+Thumbs.db
+
+# Optional: local env file
+.env.local

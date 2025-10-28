@@ -1,0 +1,101 @@
+Role-Based Query Set
+Date: 2025-10-26
+
+Notes:
+- SQL queries are designed for roles with database access to hr_data (C-Level, HR).
+- RAG queries reference available documents (employee_handbook.md, engineering_master_doc.md, financial_summary.md, quarterly_financial_report.md, marketing reports, compliance_sample.md).
+- Use these as ready-made prompts in the chatbot by logging in as the respective role.
+
+================================================================================
+Role: C-Level (SQL + RAG)
+--------------------------------------------------------------------------------
+SQL (5):
+1) Show total employees by department, sorted by highest count first.
+2) List the top 10 employees with performance_rating >= 4, including name, department, location, and salary.
+3) What is the average salary for each department? Order the results by average salary descending.
+4) Show employees hired in 2024 with performance_rating >= 4, including name, department, and hire_date.
+5) Count employees per location and department (group by location, department) and order by count descending.
+
+RAG (5):
+1) Provide an executive summary of the quarterly financial report highlighting key risks and opportunities.
+3) Identify the top compliance risks and recommended mitigations from the compliance document.
+4) Give a cross-department highlights summary using marketing_report_2024.md and financial_summary.md.
+5) Provide an executive summary of the engineering master document, focusing on architecture and delivery practices.
+
+================================================================================
+Role: HR (SQL + RAG)
+--------------------------------------------------------------------------------
+SQL (5):
+1) List all employees in the HR department with columns: name, role, location, performance_rating.
+3) How many employees were hired in 2023?
+4) What is the average salary in the Data department?
+5) List employees located in Mumbai with performance_rating >= 4, showing name, department, and salary.
+
+RAG (5):
+1) Explain the company's leave policy in simple terms.
+2) Outline the recruitment process from the employee handbook.
+3) Summarize employee benefits available to full-time employees.
+4) Provide performance appraisal guidelines and best practices for managers.
+5) List the official company holidays and any rules around optional holidays.
+
+================================================================================
+Role: Finance (RAG)
+--------------------------------------------------------------------------------
+RAG (5):
+1) Summarize the Quarterly Financial Report with key metrics and notable changes.
+2) Provide a concise overview of the Financial Summary, including revenue and expense highlights.
+3) Explain the revenue and cost breakdown and any trends mentioned in the financial documents.
+4) Identify key financial risks and controls referenced across the financial and compliance documents.
+5) Provide a budget allocation overview by department, based on the financial documents.
+
+
+================================================================================
+Role: Marketing (RAG)
+--------------------------------------------------------------------------------
+RAG (5):
+1) Summarize the Marketing Report for Q1 2024 with campaign outcomes and KPIs.
+2) Summarize the Marketing Report for Q2 2024 with performance highlights and lessons learned.
+3) Summarize the Marketing Report for Q3 2024 focusing on campaigns that performed best.
+4) Summarize the Q4 2024 marketing highlights from the relevant report.
+5) Extract key insights from the Marketing Report 2024 and propose 3 actionable recommendations.
+
+Optional SQL (if enabled) (5):
+1) Show me headcount in Marketing department by location.
+2) What is the distribution of performance ratings in the Marketing department?
+3) How many people were hired in Marketing each month during 2024?
+4) List different roles in Marketing with headcount for each.
+5) What percentage of Marketing employees have performance rating 4 or above?
+
+================================================================================
+Role: Engineering (RAG)
+--------------------------------------------------------------------------------
+RAG (5):
+1) Summarize engineering best practices from the engineering master document.
+2) Outline the deployment process, including environments and release steps.
+3) Describe coding standards and code review guidelines used by engineering.
+4) Explain the incident response process and on-call expectations.
+5) Provide an overview of the architecture and technology stack mentioned in the engineering document.
+
+Optional SQL (if enabled) (5):
+1) Show me Engineering department headcount by location.
+2) What is the average performance rating for each role in Engineering?
+3) How many people were hired in Engineering each quarter in 2024?
+4) What is the distribution of performance ratings in Engineering department?
+5) Which Engineering roles have the most high performers (rating 4 or above)?
+
+================================================================================
+Role: General (RAG)
+--------------------------------------------------------------------------------
+RAG (5):
+1) Summarize the employee handbook for new hires (key policies and expectations).
+2) What is the company's mission and core values?
+3) Explain the leave policy and how to apply for time off.
+4) List the company holidays and how floating holidays work.
+5) Summarize the code of conduct and acceptable use policies for employees.
+
+Optional SQL (if enabled) (5):
+1) How many total employees are there in the company?
+2) Which departments have the most employees?
+3) Which locations have the most employees?
+4) Show the distribution of performance ratings across the entire company.
+5) How many people were hired each month in 2024?
