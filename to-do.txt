@@ -1,0 +1,48 @@
+should able to answer how did you evalute the performance of your model?
+Answer: The model's performance evaluation was done through comprehensive metrics and automated testing:
+
+1. Performance Metrics and Optimization:
+- Response time improvements across components:
+  - Query classification: 85-95% faster
+  - RAG Chain initialization: 95% faster
+  - Vector retrieval: 30-40% faster
+  - LLM Generation: 25-35% faster
+  - Overall response time: 40-60% faster
+
+2. Automated Evaluation System:
+- Measures three key metrics (0-1 score):
+  - Faithfulness: Accuracy of answers based on context
+  - Relevancy: How well answers match questions
+  - Context Recall: Coverage of ground truth information
+
+3. Testing Process:
+- Generated QA pairs automatically from documents
+- Created ground truth dataset (qa_pairs_openai.csv)
+- Automated evaluations (evaluation_results_openai.csv)
+- Role-based evaluation (final_eval_with_roles.csv)
+
+4. Quality Control:
+- Each answer evaluated against:
+  - Original question
+  - Retrieved context
+  - Ground truth answer
+- LLM-based scoring system
+- Continuous monitoring and tracking
+- Fallback mechanisms for cache misses
+
+5. Performance Improvements:
+- Simple SQL queries: 6-10s → 2-5s (62% faster)
+- Complex RAG queries: 10-18s → 4-9s (47% faster)
+- Average response: 8-14s → 4-7s (54% faster)
+- Cached queries: Further improved to 2-4.5s (67% faster)
+
+6. Cache Performance:
+- Fast Classifier: 60-70% hit rate
+- LLM Classifier: 20-30% hit rate
+- RAG Chain: 85-95% hit rate
+- SQL Schema: 90-95% hit rate
+- Table Lookup: 95-98% hit rate
+
+
+add resources from which this rag was taken and include 1 slide in ppt, and in report also.
+
