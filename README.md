@@ -159,13 +159,5 @@ License
 -------
 This project follows the LICENSE file in the repository.
 
-Need help?
-----------
-If you want, I can:
-- Add a "fast mode" toggle to the UI that lowers `k` and uses brief prompts for faster RAG replies.
-- Wire up automatic role-scoped view creation and registration into DuckDB.
-- Add a small debug indicator in responses when the General handbook fallback is used.
-
-Open an issue or ask for a specific enhancement and I can implement it.
 
 
